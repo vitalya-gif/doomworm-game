@@ -5,181 +5,111 @@ body {
   background: #0d0d1a;
   color: white;
   text-align: center;
-  overflow-x: hidden;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
 #game {
   max-width: 500px;
-  margin: 20px auto;
+  width: 95%;
   padding: 20px;
-  background: rgba(13, 13, 26, 0.85);
+  background: rgba(13, 13, 26, 0.92);
   border-radius: 15px;
-  box-shadow: 0 0 30px rgba(79, 195, 247, 0.4);
+  box-shadow: 0 0 30px rgba(255, 65, 108, 0.5);
   position: relative;
 }
 
 h1 {
-  font-size: 2.8em;
-  color: #4fc3f7;
+  font-size: 2.4em;
+  color: #ff416c;
   text-shadow: 4px 4px 0 #000;
-  margin: 10px 0 20px;
-  letter-spacing: 2px;
+  margin: 10px 0 15px;
+  letter-spacing: 1px;
 }
 
-#stats {
-  font-size: 1.2em;
+#coins {
+  font-size: 1.6em;
+  margin: 15px 0;
   color: #ffeb3b;
-  margin-bottom: 15px;
   text-shadow: 2px 2px 0 #000;
 }
 
-#scene {
-  font-size: 1.4em;
-  line-height: 1.4;
-  margin: 20px 0;
-  text-shadow: 3px 3px 0 #000;
-  min-height: 60px;
+#car-container {
+  width: 220px;
+  height: 220px;
+  margin: 20px auto;
+  position: relative;
+  perspective: 600px;
 }
 
-#result {
-  font-size: 1.2em;
-  min-height: 25px;
-  margin-top: 15px;
-  font-weight: bold;
+#car {
+  width: 100%;
+  height: 100%;
+  font-size: 8em;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s ease, filter 0.2s;
+  position: relative;
+  z-index: 10;
 }
 
-.comic-btn {
+#car.crushed {
+  animation: crush 0.5s forwards;
+}
+
+@keyframes crush {
+  0% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+  30% { transform: scale(0.9) rotate(-5deg); filter: brightness(0.8); }
+  60% { transform: scale(1.1) rotate(10deg); filter: brightness(1.2); }
+  80% { transform: scale(0.8) rotate(-15deg); }
+  100% { transform: scale(0.7) rotate(0deg) translateY(20px); opacity: 0.6; }
+}
+
+/* Эффект разбитого стекла */
+.glass-shatter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20,20 L80,80 M80,20 L20,80 M50,10 L50,90 M10,50 L90,50' stroke='rgba(255,255,255,0.3)' stroke-width='1'/%3E%3C/svg%3E");
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.upgrade-btn {
   background: linear-gradient(45deg, #ff416c, #ff4b2b);
   color: white;
   border: 4px solid #000;
   font-family: 'Bangers', cursive;
-  font-size: 1.4em;
-  padding: 14px 24px;
-  margin: 12px;
-  cursor: pointer;
-  box-shadow: 5px 5px 0 #000;
-  transition: all 0.15s ease;
-  border-radius: 8px;
-}
-
-.comic-btn:hover {
-  background: linear-gradient(45deg, #ff7b7b, #ff6a4d);
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 7px 7px 0 #000;
-}
-
-.comic-btn:active {
-  transform: translateY(2px) scale(0.98);
-  box-shadow: 2px 2px 0 #000;
-}
-
-/* Анимации */
-.alert { animation: shake 0.5s infinite; }
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-
-.flicker { animation: flicker 1.5s infinite alternate; }
-@keyframes flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-  20%, 24%, 55% { opacity: 0.4; }
-}
-
-/* Робот и враги */
-#robot-container {
-  margin: 20px auto;
-  width: 100%;
-  height: 150px;
-  position: relative;
-  overflow: hidden;
-}
-
-.robot {
-  position: absolute;
-  bottom: 0;
-  left: 20px;
-  width: 60px;
-  height: 80px;
-  background: #38ef7d;
-  border-radius: 8px;
-  z-index: 10;
-  animation: run 1s infinite;
-}
-
-.robot::before {
-  content: "🤖";
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.5em;
-}
-
-.laser {
-  position: absolute;
-  top: 30px;
-  left: 80px;
-  width: 0;
-  height: 4px;
-  background: #ff416c;
-  transform: rotate(15deg);
-  opacity: 0;
-  z-index: 5;
-}
-
-.enemy {
-  position: absolute;
-  top: 30px;
-  right: 20px;
-  width: 50px;
-  height: 60px;
-  background: #f44336;
-  border-radius: 8px;
-  z-index: 5;
-  animation: approach 3s infinite;
-}
-
-.enemy::after {
-  content: "👾";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   font-size: 1.2em;
+  padding: 12px 20px;
+  margin: 12px 0;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  border-radius: 10px;
+  transition: all 0.15s;
 }
 
-.explosion {
-  position: absolute;
-  top: 30px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle, #ff5722, transparent);
-  border-radius: 50%;
-  opacity: 0;
-  z-index: 20;
+.upgrade-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 #000;
 }
 
-@keyframes run { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
-@keyframes approach { 0% { right: 20px; } 50% { right: 120px; } 100% { right: 20px; } }
-@keyframes shoot { 0% { opacity: 0; width: 0; } 50% { opacity: 1; width: 120px; } 100% { opacity: 0; width: 0; } }
-@keyframes explode { 0% { opacity: 0; transform: scale(0); } 50% { opacity: 1; transform: scale(1.5); } 100% { opacity: 0; transform: scale(2); } }
+.upgrade-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0 #000;
+}
 
-/* Уровни */
-.level-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #ff9800;
-  color: black;
-  padding: 4px 8px;
-  border-radius: 5px;
-  font-size: 0.9em;
-  font-weight: bold;
+#stats {
+  margin-top: 20px;
+  font-size: 1.1em;
+  color: #2196f3;
+  text-shadow: 1px 1px 0 #000;
 }
