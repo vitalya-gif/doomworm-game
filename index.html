@@ -3,23 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Doomworm Escape</title>
-  <!-- 🔥 УБРАЛ ПРОБЕЛЫ -->
+  <title>DOOMWORM CAR CRUSHER</title>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <div id="game">
-    <h1>DOOMWORM ESCAPE</h1>
-    <div id="stats">Уничтожено роботов: <span id="kill-count">0</span></div>
-    <div id="scene">Загрузка...</div>
-    <div id="buttons"></div>
-    <div id="result"></div>
-    <div id="robot-container"></div>
+    <h1>РАЗРУШЬ АВТО!</h1>
+    <div id="coins">Монеты: <span id="coin-count">0</span></div>
+    
+    <div id="car-container">
+      <div id="car" onclick="crushCar()">🚗</div>
+    </div>
+    
+    <div id="upgrades">
+      <button class="upgrade-btn" onclick="buyHammer()">Кувалда: 100 монет</button>
+    </div>
+    
+    <div id="stats">
+      Урон: <span id="damage">1</span> | Авто-разрушение: <span id="auto-dmg">0</span>/сек
+    </div>
   </div>
 
-  <!-- УДАЛИЛ АУДИО — чтобы не мешало запуску -->
+  <!-- Звук разрушения -->
+  <audio id="crash-sound" preload="auto">
+    <source src="data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mpeg">
+  </audio>
+
   <script src="game.js"></script>
 </body>
 </html>
