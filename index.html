@@ -3,32 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>DOOMWORM CAR CRUSHER</title>
+  <title>Vitaly Molodec</title>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <div id="game">
-    <h1>РАЗРУШЬ АВТО!</h1>
-    <div id="coins">Монеты: <span id="coin-count">0</span></div>
-    
-    <div id="car-container">
-      <div id="car" onclick="crushCar()">🚗</div>
-    </div>
-    
-    <div id="upgrades">
-      <button class="upgrade-btn" onclick="buyHammer()">Кувалда: 100 монет</button>
-    </div>
-    
-    <div id="stats">
-      Урон: <span id="damage">1</span> | Авто-разрушение: <span id="auto-dmg">0</span>/сек
-    </div>
+  <!-- Фон: звёзды -->
+  <div id="stars"></div>
+
+  <!-- Панель здоровья -->
+  <div id="health-bar">
+    <span id="health-percent">100%</span>
   </div>
 
-  <!-- 🔊 Реалистичный звук разбития стекла (0.5 сек) -->
-  <audio id="crash-sound" preload="auto">
-    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiIHxQwhc3y0oskGi17yfDXkB0aL3fJ8NuXIhYtdMfu5KAdGC5yx+7mnR0YLW7G7eOWGxcsbcbt4pEbFiprxuzhkBoVK2jG7OGPGhUpZsbs4I0ZFChlxuvfjBgUJ2TF696KGhQmY8Tq3okYFCVhw+nchxgUI1/A6dyEGhQiXr/p24UYEyFcvenahBgTH1m86NiDGhMdV7no1oIaExxUuOfVgRoTG1K25tN/GhMZULXl0n4aExdOs+PRfRoTFUyw4s98GhMSUK/gznkaEhBNrd7Neg==" type="audio/wav">
+  <!-- Бонусные вёдра -->
+  <div id="buckets">
+    <span id="bucket-count">20</span>🪣
+  </div>
+
+  <!-- Надпись по центру -->
+  <div id="title">vitaly molodec</div>
+
+  <!-- Персонаж -->
+  <div id="character" onclick="pourWater()">
+    <div id="body">
+      <div id="nike-logo"></div>
+    </div>
+    <div id="water-effect" class="hidden"></div>
+  </div>
+
+  <!-- Звук крика -->
+  <audio id="scream-sound" preload="auto">
+    <source src="audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA" type="audio/wav">
   </audio>
 
   <script src="game.js"></script>
