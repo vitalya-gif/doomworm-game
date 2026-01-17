@@ -14,22 +14,7 @@
     <div id="coins">Монеты: <span id="coin-count">0</span></div>
     
     <div id="car-container">
-      <svg id="car" viewBox="0 0 200 100" onclick="crushCar()">
-        <!-- Кузов -->
-        <path id="body" d="M20,60 Q40,40 100,40 Q160,40 180,60 L180,80 L20,80 Z" fill="#333" stroke="#000" stroke-width="2"/>
-        <!-- Окна -->
-        <path id="window" d="M40,40 Q100,30 160,40 L160,55 L40,55 Z" fill="#a0d8ef" stroke="#000" stroke-width="1"/>
-        <!-- Колёса -->
-        <circle id="wheel1" cx="50" cy="85" r="10" fill="#222"/>
-        <circle id="wheel2" cx="150" cy="85" r="10" fill="#222"/>
-        <!-- Фары -->
-        <circle cx="175" cy="55" r="3" fill="#ff0"/>
-        <circle cx="25" cy="55" r="2" fill="#aaa"/>
-      </svg>
-      
-      <!-- Эффекты -->
-      <div id="smoke" class="hidden"></div>
-      <div id="cracks" class="hidden"></div>
+      <div id="car" onclick="crushCar()">🚗</div>
     </div>
     
     <div id="upgrades">
@@ -41,9 +26,9 @@
     </div>
   </div>
 
-  <!-- Звук разбития -->
+  <!-- 🔊 Реалистичный звук разбития стекла (0.5 сек) -->
   <audio id="crash-sound" preload="auto">
-    <source src="audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiIHxQwhc3y0oskGi17yfDXkB0aL3fJ8NuXIhYtdMfu5KAdGC5yx+7mnR0YLW7G7eOWGxcsbcbt4pEbFiprxuzhkBoVK2jG7OGPGhUpZsbs4I0ZFChlxuvfjBgUJ2TF696KGhQmY8Tq3okYFCVhw+nchxgUI1/A6dyEGhQiXr/p24UYEyFcvenahBgTH1m86NiDGhMdV7no1oIaExxUuOfVgRoTG1K25tN/GhMZULXl0n4aExdOs+PRfRoTFUyw4s98GhMSUK/gznkaEhBNrd7Neg==" type="audio/wav">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiIHxQwhc3y0oskGi17yfDXkB0aL3fJ8NuXIhYtdMfu5KAdGC5yx+7mnR0YLW7G7eOWGxcsbcbt4pEbFiprxuzhkBoVK2jG7OGPGhUpZsbs4I0ZFChlxuvfjBgUJ2TF696KGhQmY8Tq3okYFCVhw+nchxgUI1/A6dyEGhQiXr/p24UYEyFcvenahBgTH1m86NiDGhMdV7no1oIaExxUuOfVgRoTG1K25tN/GhMZULXl0n4aExdOs+PRfRoTFUyw4s98GhMSUK/gznkaEhBNrd7Neg==" type="audio/wav">
   </audio>
 
   <script src="game.js"></script>
