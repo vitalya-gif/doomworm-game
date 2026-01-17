@@ -26,7 +26,6 @@
       z-index: 1;
     }
 
-    /* Панель здоровья */
     #health-bar {
       position: absolute;
       top: 20px;
@@ -37,7 +36,6 @@
       z-index: 10;
     }
 
-    /* Счётчик вёдер */
     #buckets {
       position: absolute;
       top: 20px;
@@ -48,7 +46,6 @@
       z-index: 10;
     }
 
-    /* Надпись по центру */
     #title {
       position: absolute;
       top: 50%;
@@ -61,10 +58,25 @@
       z-index: 5;
       pointer-events: none;
     }
+
+    #hero-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 8;
+      cursor: pointer;
+    }
+
+    .effect {
+      position: absolute;
+      opacity: 0;
+      z-index: 9;
+    }
   </style>
 </head>
 <body>
-  <!-- Фон: зимний лес -->
+  <!-- Фон -->
   <svg id="forest-bg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
     <rect width="800" height="600" fill="#0b1a3a"/>
     <circle cx="100" cy="80" r="1.5" fill="white"/>
@@ -89,14 +101,103 @@
     <path d="M0 500 Q200 480 400 500 T800 500 L800 600 L0 600 Z" fill="white" stroke="black" stroke-width="2"/>
   </svg>
 
-  <!-- Панель здоровья -->
+  <!-- UI -->
   <div id="health-bar">❤️ <span id="hp">100%</span></div>
-
-  <!-- Счётчик вёдер -->
   <div id="buckets">🪣 <span id="water">20</span></div>
-
-  <!-- Надпись по центру -->
   <div id="title">vitaly molodec</div>
+
+  <!-- Персонаж -->
+  <div id="hero-container" onclick="pourWater()">
+    <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg" width="120" height="220">
+      <ellipse cx="50" cy="60" rx="20" ry="25" fill="#f4c2a1" stroke="black" stroke-width="2"/>
+      <rect x="20" y="70" width="8" height="40" fill="#f4c2a1" stroke="black" stroke-width="2"/>
+      <rect x="72" y="70" width="8" height="40" fill="#f4c2a1" stroke="black" stroke-width="2"/>
+      <rect x="35" y="110" width="12" height="50" fill="#f4c2a1" stroke="black" stroke-width="2"/>
+      <rect x="53" y="110" width="12" height="50" fill="#f4c2a1" stroke="black" stroke-width="2"/>
+      <rect x="30" y="110" width="40" height="50" fill="black" stroke="black" stroke-width="2"/>
+      <path d="M45 130 Q50 125 55 130" stroke="white" stroke-width="2" fill="none"/>
+      <circle cx="50" cy="40" r="15" fill="#f4c2a1" stroke="black" stroke-width="2"/>
+      <circle cx="45" cy="38" r="2" fill="black"/>
+      <circle cx="55" cy="38" r="2" fill="black"/>
+      <path d="M45 45 Q50 50 55 45" stroke="black" stroke-width="2" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- Аудио (тихий щелчок для совместимости) -->
+  <audio id="scream-sound" preload="auto">
+    <source src="audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA" type="audio/wav">
+  </audio>
+
+  <script>
+    let health = 100;
+    let water = 20;
+
+    function updateUI() {
+      document.getElementById('hp').textContent = `${Math.max(0, Math.floor(health))}%`;
+      document.getElementById('water').textContent = water;
+    }
+
+    function pourWater() {
+      if (water <= 0) return;
+
+      const container = document.body;
+      const heroRect = document.getElementById('hero-container').getBoundingClientRect();
+
+      // === Ведро ===
+      const bucket = document.createElement('div');
+      bucket.innerHTML = `<svg viewBox="0 0 50 60" xmlns="http://www.w3.org/2000/svg"><path d="M10 10 L40 10 L45 50 L5 50 Z" fill="#cccccc" stroke="black" stroke-width="2"/><path d="M15 5 L35 5 L40 10 L10 10 Z" fill="#bbbbbb" stroke="black" stroke-width="2"/><path d="M20 0 Q25 -10 30 0" stroke="black" stroke-width="2" fill="none"/></svg>`;
+      bucket.className = 'effect';
+      bucket.style.left = `${heroRect.left + heroRect.width / 2 - 25}px`;
+      bucket.style.top = `${heroRect.top - 80}px`;
+      container.appendChild(bucket);
+
+      // Анимация ведра
+      setTimeout(() => {
+        bucket.style.transition = 'top 0.5s, opacity 0.5s';
+        bucket.style.opacity = '1';
+        bucket.style.top = `${heroRect.top - 20}px`;
+      }, 100);
+
+      // === Брызги и крик ===
+      setTimeout(() => {
+        // Брызги
+        const splash = document.createElement('div');
+        splash.innerHTML = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 20 Q60 10 70 20 Q80 30 70 40 Q60 50 50 40 Q40 50 30 40 Q20 30 30 20 Q40 10 50 20" fill="#add8e6" stroke="black" stroke-width="1"/><circle cx="45" cy="25" r="3" fill="#ffffff"/><circle cx="55" cy="30" r="2" fill="#ffffff"/></svg>`;
+        splash.className = 'effect';
+        splash.style.left = `${heroRect.left + heroRect.width / 2 - 50}px`;
+        splash.style.top = `${heroRect.top + 20}px`;
+        container.appendChild(splash);
+
+        // Речевой пузырь
+        const bubble = document.createElement('div');
+        bubble.innerHTML = `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg"><path d="M20 80 Q0 60 20 40 Q40 20 60 40 Q80 60 60 80 L40 80 L30 90 L20 80" fill="white" stroke="black" stroke-width="3"/><text x="50" y="65" font-family="Bangers, cursive" font-size="30" fill="black" text-anchor="middle">АААА!</text></svg>`;
+        bubble.className = 'effect';
+        bubble.style.left = `${heroRect.left + heroRect.width / 2 - 100}px`;
+        bubble.style.top = `${heroRect.top - 120}px`;
+        container.appendChild(bubble);
+
+        // Звук
+        const sound = document.getElementById('scream-sound');
+        if (sound) {
+          sound.currentTime = 0;
+          sound.play().catch(() => {});
+        }
+
+        // Удаляем через 1 сек
+        setTimeout(() => {
+          bucket.remove();
+          splash.remove();
+          bubble.remove();
+        }, 1000);
+      }, 600);
+
+      // Обновляем данные
+      water--;
+      health = Math.min(100, health + 5);
+      updateUI();
+    }
+
+    updateUI();
+  </script>
 </body>
-</html>
-Этап 2: добавлены здоровье, вёдра и надпись vitaly molodec
+</html> Этап 3: добавлен персонаж, вода, крик АААА!
