@@ -34,6 +34,7 @@ function updateUI() {
   
   const btn = document.querySelector('.upgrade-btn');
   btn.disabled = coins < 100;
+  btn.textContent = `Кувалда (${hammerLevel + 1}): ${100 * (hammerLevel + 1)} монет`;
 }
 
 // Проиграть звук разрушения
@@ -41,7 +42,10 @@ function playCrashSound() {
   const sound = document.getElementById('crash-sound');
   if (sound) {
     sound.currentTime = 0;
-    sound.play().catch(e => console.log("Audio play failed"));
+    // Игнорируем ошибки — браузер может блокировать, но не падаем
+    sound.play().catch(() => {
+      // Тихо пропускаем — звук не критичен для игры
+    });
   }
 }
 
@@ -50,7 +54,7 @@ function crushCar() {
   const car = document.getElementById('car');
   const container = document.getElementById('car-container');
   
-  // Добавляем эффект разбитого стекла
+  // Эффект разбитого стекла
   const shatter = document.createElement('div');
   shatter.className = 'glass-shatter';
   shatter.style.opacity = '0.7';
@@ -60,7 +64,7 @@ function crushCar() {
     shatter.remove();
   }, 500);
   
-  // Анимация
+  // Анимация деформации
   car.classList.remove('crushed');
   void car.offsetWidth; // триггер перерисовки
   car.classList.add('crushed');
@@ -74,22 +78,19 @@ function crushCar() {
   saveGame();
 }
 
-// Купить кувалду (увеличивает урон)
+// Купить кувалду
 function buyHammer() {
-  if (coins >= 100) {
-    coins -= 100;
+  const cost = 100 * (hammerLevel + 1);
+  if (coins >= cost) {
+    coins -= cost;
     damage += 2;
     hammerLevel++;
     updateUI();
     saveGame();
-    
-    // Обновим текст кнопки
-    const btn = document.querySelector('.upgrade-btn');
-    btn.textContent = `Кувалда (${hammerLevel + 1}): ${100 * (hammerLevel + 1)} монет`;
   }
 }
 
-// Пассивный доход (авто-разрушение)
+// Пассивный доход
 setInterval(() => {
   if (autoDamage > 0) {
     coins += autoDamage / 10;
@@ -102,8 +103,9 @@ setInterval(() => {
 loadGame();
 updateUI();
 
-// Поддержка Telegram
+// Поддержка Telegram WebApp
 if (window.Telegram?.WebApp) {
-  window.Telegram.WebApp.expand();
-  window.Telegram.WebApp.ready();
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+  tg.ready();
 }
