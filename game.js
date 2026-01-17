@@ -1,157 +1,111 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Bangers', cursive;
-  background: #0a0a15;
-  color: white;
-  text-align: center;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  position: relative;
+let coins = 0;
+let damage = 1;
+let autoDamage = 0;
+let hammerLevel = 0;
+
+// Загрузка сохранения
+function loadGame() {
+  const saved = localStorage.getItem('doomworm-car-crusher');
+  if (saved) {
+    const data = JSON.parse(saved);
+    coins = data.coins || 0;
+    damage = data.damage || 1;
+    autoDamage = data.autoDamage || 0;
+    hammerLevel = data.hammerLevel || 0;
+    updateUI();
+  }
 }
 
-/* Фон: руины и туман */
-body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(100, 0, 0, 0.1), transparent 30%),
-    radial-gradient(circle at 80% 70%, rgba(0, 50, 100, 0.1), transparent 30%),
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8) 1px, transparent 1px, transparent 4px);
-  z-index: -2;
+// Сохранение
+function saveGame() {
+  localStorage.setItem('doomworm-car-crusher', JSON.stringify({
+    coins,
+    damage,
+    autoDamage,
+    hammerLevel
+  }));
 }
 
-#game {
-  max-width: 500px;
-  width: 95%;
-  padding: 20px;
-  background: rgba(10, 10, 20, 0.95);
-  border-radius: 15px;
-  box-shadow: 0 0 40px rgba(255, 65, 108, 0.6);
-  position: relative;
-  border: 2px solid #ff416c;
+// Обновление интерфейса
+function updateUI() {
+  document.getElementById('coin-count').textContent = Math.floor(coins);
+  document.getElementById('damage').textContent = damage;
+  document.getElementById('auto-dmg').textContent = autoDamage;
+  
+  const btn = document.querySelector('.upgrade-btn');
+  btn.disabled = coins < 100;
+  btn.textContent = `Кувалда (${hammerLevel + 1}): ${100 * (hammerLevel + 1)} монет`;
 }
 
-h1 {
-  font-size: 2.4em;
-  color: #ff416c;
-  text-shadow: 4px 4px 0 #000, 0 0 15px rgba(255, 65, 108, 0.7);
-  margin: 10px 0 15px;
+// Проиграть звук разрушения
+function playCrashSound() {
+  const sound = document.getElementById('crash-sound');
+  if (sound) {
+    sound.currentTime = 0;
+    // Игнорируем ошибки — браузер может блокировать, но не падаем
+    sound.play().catch(() => {
+      // Тихо пропускаем — звук не критичен для игры
+    });
+  }
 }
 
-#coins {
-  font-size: 1.6em;
-  margin: 15px 0;
-  color: #ffeb3b;
-  text-shadow: 2px 2px 0 #000;
+// Разрушить машину
+function crushCar() {
+  const car = document.getElementById('car');
+  const container = document.getElementById('car-container');
+  
+  // Эффект разбитого стекла
+  const shatter = document.createElement('div');
+  shatter.className = 'glass-shatter';
+  shatter.style.opacity = '0.7';
+  container.appendChild(shatter);
+  
+  setTimeout(() => {
+    shatter.remove();
+  }, 500);
+  
+  // Анимация деформации
+  car.classList.remove('crushed');
+  void car.offsetWidth; // триггер перерисовки
+  car.classList.add('crushed');
+  
+  // Звук
+  playCrashSound();
+  
+  // Награда
+  coins += damage;
+  updateUI();
+  saveGame();
 }
 
-#car-container {
-  width: 240px;
-  height: 140px;
-  margin: 20px auto;
-  position: relative;
-  cursor: pointer;
+// Купить кувалду
+function buyHammer() {
+  const cost = 100 * (hammerLevel + 1);
+  if (coins >= cost) {
+    coins -= cost;
+    damage += 2;
+    hammerLevel++;
+    updateUI();
+    saveGame();
+  }
 }
 
-#car {
-  width: 100%;
-  height: 100%;
-  transition: transform 0.2s;
-}
+// Пассивный доход
+setInterval(() => {
+  if (autoDamage > 0) {
+    coins += autoDamage / 10;
+    updateUI();
+    saveGame();
+  }
+}, 100);
 
-#car.crushed {
-  animation: crushCar 0.6s forwards;
-}
+// Инициализация
+loadGame();
+updateUI();
 
-@keyframes crushCar {
-  0% { transform: scale(1); }
-  30% { transform: scale(0.95) rotate(-3deg); }
-  60% { transform: scale(1.05) rotate(5deg); }
-  100% { transform: scale(0.85) translateY(10px); }
-}
-
-/* Трещины на стекле */
-#cracks {
-  position: absolute;
-  top: 30px;
-  left: 50px;
-  width: 140px;
-  height: 30px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,50 L90,50 M50,10 L50,90 M20,20 L80,80 M80,20 L20,80' stroke='rgba(255,255,255,0.4)' stroke-width='1'/%3E%3C/svg%3E");
-  opacity: 0;
-  pointer-events: none;
-}
-
-#cracks.visible {
-  opacity: 1;
-  animation: flickerCracks 1s infinite;
-}
-
-@keyframes flickerCracks {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 0.2; }
-}
-
-/* Дым */
-#smoke {
-  position: absolute;
-  bottom: 80px;
-  left: 100px;
-  width: 40px;
-  height: 40px;
-  background: radial-gradient(circle, rgba(100,100,100,0.6), transparent 70%);
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-}
-
-#smoke.smoking {
-  animation: smokePuff 2s infinite;
-}
-
-@keyframes smokePuff {
-  0% { opacity: 0; transform: translateY(0) scale(0.5); }
-  50% { opacity: 0.7; }
-  100% { opacity: 0; transform: translateY(-30px) scale(1.5); }
-}
-
-.hidden { display: none; }
-
-.upgrade-btn {
-  background: linear-gradient(45deg, #ff416c, #ff4b2b);
-  color: white;
-  border: 4px solid #000;
-  font-family: 'Bangers', cursive;
-  font-size: 1.2em;
-  padding: 12px 20px;
-  margin: 12px 0;
-  cursor: pointer;
-  box-shadow: 4px 4px 0 #000;
-  border-radius: 10px;
-  transition: all 0.15s;
-}
-
-.upgrade-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 6px 6px 0 #000;
-}
-
-.upgrade-btn:disabled {
-  background: #555;
-  cursor: not-allowed;
-}
-
-#stats {
-  margin-top: 20px;
-  font-size: 1.1em;
-  color: #2196f3;
-  text-shadow: 1px 1px 0 #000;
+// Поддержка Telegram WebApp
+if (window.Telegram?.WebApp) {
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+  tg.ready();
 }
