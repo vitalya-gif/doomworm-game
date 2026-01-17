@@ -1,115 +1,178 @@
 body {
   margin: 0;
   padding: 0;
+  background: linear-gradient(to right, #0b1a3a, #5ca9dd);
   font-family: 'Bangers', cursive;
-  background: #0d0d1a;
   color: white;
-  text-align: center;
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
-}
-
-#game {
-  max-width: 500px;
-  width: 95%;
-  padding: 20px;
-  background: rgba(13, 13, 26, 0.92);
-  border-radius: 15px;
-  box-shadow: 0 0 30px rgba(255, 65, 108, 0.5);
   position: relative;
 }
 
-h1 {
-  font-size: 2.4em;
-  color: #ff416c;
-  text-shadow: 4px 4px 0 #000;
-  margin: 10px 0 15px;
-  letter-spacing: 1px;
-}
-
-#coins {
-  font-size: 1.6em;
-  margin: 15px 0;
-  color: #ffeb3b;
-  text-shadow: 2px 2px 0 #000;
-}
-
-#car-container {
-  width: 220px;
-  height: 220px;
-  margin: 20px auto;
-  position: relative;
-  perspective: 600px;
-}
-
-#car {
-  width: 100%;
-  height: 100%;
-  font-size: 8em;
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.2s ease, filter 0.2s;
-  position: relative;
-  z-index: 10;
-}
-
-#car.crushed {
-  animation: crush 0.5s forwards;
-}
-
-@keyframes crush {
-  0% { transform: scale(1) rotate(0deg); filter: brightness(1); }
-  30% { transform: scale(0.9) rotate(-5deg); filter: brightness(0.8); }
-  60% { transform: scale(1.1) rotate(10deg); filter: brightness(1.2); }
-  80% { transform: scale(0.8) rotate(-15deg); }
-  100% { transform: scale(0.7) rotate(0deg) translateY(20px); opacity: 0.6; }
-}
-
-/* Эффект разбитого стекла */
-.glass-shatter {
+#stars {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20,20 L80,80 M80,20 L20,80 M50,10 L50,90 M10,50 L90,50' stroke='rgba(255,255,255,0.3)' stroke-width='1'/%3E%3C/svg%3E");
-  opacity: 0;
   pointer-events: none;
-  z-index: 5;
+  z-index: 1;
 }
 
-.upgrade-btn {
-  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+#stars::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  box-shadow:
+    10% 20% 0 0 white,
+    25% 10% 0 0 white,
+    40% 30% 0 0 white,
+    60% 25% 0 0 white,
+    75% 15% 0 0 white,
+    90% 35% 0 0 white,
+    15% 50% 0 0 white,
+    35% 60% 0 0 white,
+    55% 55% 0 0 white,
+    70% 70% 0 0 white,
+    85% 80% 0 0 white;
+  opacity: 0.8;
+}
+
+#health-bar {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 1.4em;
+  color: gold;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+  z-index: 10;
+}
+
+#buckets {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.4em;
+  color: #fff;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  z-index: 10;
+}
+
+#title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.8em;
   color: white;
-  border: 4px solid #000;
-  font-family: 'Bangers', cursive;
-  font-size: 1.2em;
-  padding: 12px 20px;
-  margin: 12px 0;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+  letter-spacing: 3px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+#character {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 200px;
   cursor: pointer;
-  box-shadow: 4px 4px 0 #000;
+  z-index: 8;
+}
+
+#body {
+  width: 60px;
+  height: 160px;
+  background: #f0f0f0;
+  margin: 0 auto;
+  border-radius: 40px 40px 0 0;
+  position: relative;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+#body::after {
+  content: "";
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 80px;
+  background: black;
   border-radius: 10px;
-  transition: all 0.15s;
 }
 
-.upgrade-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 6px 6px 0 #000;
+#nike-logo {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 15px;
 }
 
-.upgrade-btn:disabled {
-  background: #555;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: 4px 4px 0 #000;
+#nike-logo::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: white;
+  clip-path: polygon(0 100%, 30% 0, 100% 100%);
 }
 
-#stats {
-  margin-top: 20px;
-  font-size: 1.1em;
-  color: #2196f3;
-  text-shadow: 1px 1px 0 #000;
+#water-effect {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(173, 216, 230, 0.8), transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 9;
 }
+
+#water-effect.visible {
+  animation: pourWater 1s forwards;
+}
+
+@keyframes pourWater {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(50px) scale(1.5); }
+}
+
+.hidden { display: none; }
+
+/* Снег */
+.snow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: white;
+  z-index: 2;
+}
+
+/* Ёлки */
+.tree {
+  position: absolute;
+  bottom: 80px;
+  width: 40px;
+  height: 100px;
+  background: conic-gradient(from 180deg, transparent 0deg, #0a5f20 120deg, transparent 240deg);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  z-index: 3;
+}
+
+#tree1 { left: 10%; }
+#tree2 { right: 15%; transform: scaleX(-1); }
