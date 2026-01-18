@@ -3,75 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Clicker 🐹</title>
-    <!-- Подключаем Telegram WebApp SDK -->
+    <title>Epic Clicker 🎮</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Контейнер для летающих чисел -->
+    <div id="floating-numbers"></div>
+    
+    <!-- Контейнер для частиц -->
+    <div id="particles-container"></div>
+    
+    <!-- Контейнер для конфеtti -->
+    <div id="confetti-container"></div>
+    
+    <!-- Основной контейнер -->
     <div class="container">
-        <!-- Заголовок -->
         <header>
-            <h1><i class="fas fa-mouse-pointer"></i> Simple Clicker</h1>
+            <h1><i class="fas fa-gamepad"></i> Epic Clicker</h1>
             <div class="user-info" id="user-info">
                 <span id="username">Гость</span>
+                <div class="level-badge" id="level-badge">Ур. 1</div>
             </div>
         </header>
 
-        <!-- Основной игровой экран -->
         <main>
+            <!-- Прогресс-бар уровня -->
+            <div class="level-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="level-progress"></div>
+                </div>
+                <div class="level-info">
+                    <span>Уровень <span id="current-level">1</span></span>
+                    <span id="level-stats">0/100 XP</span>
+                </div>
+            </div>
+
+            <!-- Кликер с эффектами -->
             <div class="clicker-area" id="clicker">
                 <div class="click-counter">
                     <span class="counter" id="counter">0</span>
                     <span class="label">кликов</span>
+                    <div class="combo-counter" id="combo-counter">
+                        <i class="fas fa-bolt"></i>
+                        <span id="combo">x1</span>
+                    </div>
                 </div>
+                
                 <div class="click-button">
                     <button id="click-btn">
-                        <i class="fas fa-hand-pointer"></i>
-                        <span>КЛИК!</span>
+                        <div class="click-effect" id="click-effect">
+                            <i class="fas fa-hand-pointer"></i>
+                            <div class="pulse-ring"></div>
+                            <div class="sparkles"></div>
+                        </div>
+                        <span>КЛИКНИ МЕНЯ!</span>
                     </button>
+                    <div class="button-effects">
+                        <div class="effect-dot" id="effect-dot-1"></div>
+                        <div class="effect-dot" id="effect-dot-2"></div>
+                        <div class="effect-dot" id="effect-dot-3"></div>
+                    </div>
                 </div>
-                <div class="cps">Скорость: <span id="cps">0</span> кликов/сек</div>
+                
+                <div class="cps">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span id="cps">0</span> кликов/сек
+                </div>
+                
+                <!-- Анимация комбо -->
+                <div class="combo-animation" id="combo-animation"></div>
             </div>
 
-            <!-- Улучшения -->
+            <!-- Улучшения с анимациями -->
             <div class="upgrades">
-                <h2><i class="fas fa-arrow-up"></i> Улучшения</h2>
+                <h2><i class="fas fa-rocket"></i> Улучшения</h2>
                 <div class="upgrade-grid">
                     <div class="upgrade" id="auto-clicker">
+                        <div class="upgrade-icon glowing">
+                            <i class="fas fa-robot"></i>
+                        </div>
                         <h3>Автокликер</h3>
-                        <p>Кликает автоматически: <span id="auto-power">1</span> клик/сек</p>
-                        <p>Уровень: <span id="auto-level">0</span></p>
+                        <p><i class="fas fa-bolt"></i> Мощность: <span id="auto-power">1</span>/сек</p>
+                        <p><i class="fas fa-layer-group"></i> Уровень: <span id="auto-level">0</span></p>
                         <button class="buy-btn" onclick="buyUpgrade('auto')">
-                            Купить: <span id="auto-price">10</span> кликов
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="auto-price">10</span> кликов
                         </button>
+                        <div class="upgrade-progress" id="auto-progress"></div>
                     </div>
                     
                     <div class="upgrade" id="multiplier">
+                        <div class="upgrade-icon glowing">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
                         <h3>Мультипликатор</h3>
-                        <p>Умножает клики: x<span id="multi-value">1</span></p>
-                        <p>Уровень: <span id="multi-level">0</span></p>
+                        <p><i class="fas fa-chart-line"></i> Множитель: x<span id="multi-value">1</span></p>
+                        <p><i class="fas fa-layer-group"></i> Уровень: <span id="multi-level">0</span></p>
                         <button class="buy-btn" onclick="buyUpgrade('multi')">
-                            Купить: <span id="multi-price">50</span> кликов
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="multi-price">50</span> кликов
                         </button>
+                        <div class="upgrade-progress" id="multi-progress"></div>
+                    </div>
+                    
+                    <!-- Новое улучшение: Комбо -->
+                    <div class="upgrade" id="combo-upgrade">
+                        <div class="upgrade-icon glowing">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h3>Комбо система</h3>
+                        <p><i class="fas fa-bolt"></i> Макс. комбо: <span id="max-combo">x3</span></p>
+                        <p><i class="fas fa-layer-group"></i> Уровень: <span id="combo-level">0</span></p>
+                        <button class="buy-btn" onclick="buyUpgrade('combo')">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="combo-price">100</span> кликов
+                        </button>
+                        <div class="upgrade-progress" id="combo-progress"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Статистика -->
+            <!-- Статистика с анимациями -->
             <div class="stats">
                 <h2><i class="fas fa-chart-bar"></i> Статистика</h2>
                 <div class="stats-grid">
-                    <div class="stat">
+                    <div class="stat glowing-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
                         <span class="stat-label">Всего кликов:</span>
                         <span class="stat-value" id="total-clicks">0</span>
                     </div>
-                    <div class="stat">
+                    <div class="stat glowing-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
                         <span class="stat-label">Заработано авто:</span>
                         <span class="stat-value" id="auto-earned">0</span>
                     </div>
-                    <div class="stat">
+                    <div class="stat glowing-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <span class="stat-label">Рекорд комбо:</span>
+                        <span class="stat-value" id="record-combo">x1</span>
+                    </div>
+                    <div class="stat glowing-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
                         <span class="stat-label">Время игры:</span>
                         <span class="stat-value" id="play-time">0:00</span>
                     </div>
@@ -79,21 +161,42 @@
             </div>
         </main>
 
-        <!-- Кнопки управления -->
+        <!-- Кнопки с эффектами -->
         <footer>
-            <button class="tg-btn" onclick="saveGame()">
-                <i class="fas fa-save"></i> Сохранить
+            <button class="tg-btn effect-btn" onclick="saveGame()">
+                <div class="btn-effect">
+                    <i class="fas fa-save"></i>
+                </div>
+                Сохранить
             </button>
-            <button class="tg-btn" onclick="resetGame()">
-                <i class="fas fa-redo"></i> Сбросить
+            <button class="tg-btn effect-btn" onclick="boostGame()">
+                <div class="btn-effect">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                Буст!
             </button>
-            <button class="tg-btn" onclick="shareGame()">
-                <i class="fas fa-share"></i> Поделиться
+            <button class="tg-btn effect-btn" onclick="shareGame()">
+                <div class="btn-effect">
+                    <i class="fas fa-share"></i>
+                </div>
+                Поделиться
             </button>
         </footer>
     </div>
 
-    <!-- Подключаем наш JavaScript -->
+    <!-- Модальное окно для достижений -->
+    <div class="modal" id="achievement-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-trophy"></i> Новое достижение!</h3>
+                <button class="close-modal" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="achievement-body">
+                <!-- Достижения будут здесь -->
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
