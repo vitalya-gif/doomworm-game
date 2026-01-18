@@ -1,42 +1,99 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>DOOMWORM CLICKER 2.0</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Clicker 🐹</title>
+    <!-- Подключаем Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div id="title">DOOMWORM CLICKER 2.0</div>
+    <div class="container">
+        <!-- Заголовок -->
+        <header>
+            <h1><i class="fas fa-mouse-pointer"></i> Simple Clicker</h1>
+            <div class="user-info" id="user-info">
+                <span id="username">Гость</span>
+            </div>
+        </header>
 
-  <div id="score" class="ui-panel">Очки: <span id="points">0</span></div>
-  <div id="upgrades" class="ui-panel">Улучшения: <span id="upg-count">0</span></div>
-  <button id="reset-btn">Сброс</button>
+        <!-- Основной игровой экран -->
+        <main>
+            <div class="clicker-area" id="clicker">
+                <div class="click-counter">
+                    <span class="counter" id="counter">0</span>
+                    <span class="label">кликов</span>
+                </div>
+                <div class="click-button">
+                    <button id="click-btn">
+                        <i class="fas fa-hand-pointer"></i>
+                        <span>КЛИК!</span>
+                    </button>
+                </div>
+                <div class="cps">Скорость: <span id="cps">0</span> кликов/сек</div>
+            </div>
 
-  <div id="hero-container">
-    <img src="doombot.png" class="hero">
-  </div>
+            <!-- Улучшения -->
+            <div class="upgrades">
+                <h2><i class="fas fa-arrow-up"></i> Улучшения</h2>
+                <div class="upgrade-grid">
+                    <div class="upgrade" id="auto-clicker">
+                        <h3>Автокликер</h3>
+                        <p>Кликает автоматически: <span id="auto-power">1</span> клик/сек</p>
+                        <p>Уровень: <span id="auto-level">0</span></p>
+                        <button class="buy-btn" onclick="buyUpgrade('auto')">
+                            Купить: <span id="auto-price">10</span> кликов
+                        </button>
+                    </div>
+                    
+                    <div class="upgrade" id="multiplier">
+                        <h3>Мультипликатор</h3>
+                        <p>Умножает клики: x<span id="multi-value">1</span></p>
+                        <p>Уровень: <span id="multi-level">0</span></p>
+                        <button class="buy-btn" onclick="buyUpgrade('multi')">
+                            Купить: <span id="multi-price">50</span> кликов
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-  <div id="drone-container">
-    <img id="drone" src="drone.png">
-  </div>
+            <!-- Статистика -->
+            <div class="stats">
+                <h2><i class="fas fa-chart-bar"></i> Статистика</h2>
+                <div class="stats-grid">
+                    <div class="stat">
+                        <span class="stat-label">Всего кликов:</span>
+                        <span class="stat-value" id="total-clicks">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Заработано авто:</span>
+                        <span class="stat-value" id="auto-earned">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Время игры:</span>
+                        <span class="stat-value" id="play-time">0:00</span>
+                    </div>
+                </div>
+            </div>
+        </main>
 
-  <div id="explosion">
-    <img src="explosion.png" class="explosion-img">
-  </div>
+        <!-- Кнопки управления -->
+        <footer>
+            <button class="tg-btn" onclick="saveGame()">
+                <i class="fas fa-save"></i> Сохранить
+            </button>
+            <button class="tg-btn" onclick="resetGame()">
+                <i class="fas fa-redo"></i> Сбросить
+            </button>
+            <button class="tg-btn" onclick="shareGame()">
+                <i class="fas fa-share"></i> Поделиться
+            </button>
+        </footer>
+    </div>
 
-  <div id="story">
-    DoomBot с тобой. Уничтожай дронов OmniCore!
-  </div>
-
-  <audio id="explosion-sound" preload="auto">
-    <source src="explosion.wav" type="audio/wav">
-  </audio>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="game.js"></script>
-  <script src="telegram.js"></script>
+    <!-- Подключаем наш JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
