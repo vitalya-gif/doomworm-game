@@ -1,289 +1,418 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* ===== ОСНОВНЫЕ ЭФФЕКТЫ ===== */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 20px;
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+    50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.8); }
 }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: rgba(255, 255, 255, 0.95);
+@keyframes floatUp {
+    0% { 
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% { 
+        transform: translateY(-100px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+@keyframes particleFly {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--tx), var(--ty)) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+    }
+    100% {
+        transform: translateY(1000px) rotate(360deg);
+    }
+}
+
+@keyframes comboGlow {
+    0%, 100% { 
+        text-shadow: 0 0 10px #ff0080, 0 0 20px #ff0080, 0 0 30px #ff0080;
+    }
+    50% { 
+        text-shadow: 0 0 20px #00ff80, 0 0 40px #00ff80, 0 0 60px #00ff80;
+    }
+}
+
+/* ===== КОНТЕЙНЕРЫ ДЛЯ ЭФФЕКТОВ ===== */
+#floating-numbers {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+#particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
+
+#confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 998;
+    overflow: hidden;
+}
+
+/* ===== ЭФФЕКТЫ КЛИКЕРА ===== */
+.click-button {
+    position: relative;
+}
+
+.click-effect {
+    position: relative;
+    display: inline-block;
+}
+
+.pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 2s infinite;
+}
+
+.sparkles {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+}
+
+.button-effects {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    transform: translate(-50%, -50%);
+}
+
+.effect-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(45deg, #ff0080, #00ff80);
+    border-radius: 50%;
+    opacity: 0;
+}
+
+/* ===== КОМБО СИСТЕМА ===== */
+.combo-counter {
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    background: linear-gradient(45deg, #ff0080, #ff8c00);
+    color: white;
+    padding: 5px 15px;
     border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: bounce 0.5s infinite alternate;
 }
 
-/* Шапка */
-header {
+.combo-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* ===== УРОВНИ И ПРОГРЕСС ===== */
+.level-progress {
+    margin-bottom: 25px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff80, #00ccff);
+    border-radius: 10px;
+    width: 0%;
+    transition: width 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.3) 50%, 
+        transparent 100%);
+    animation: progressShine 2s infinite linear;
+}
+
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.level-info {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-weight: bold;
+}
+
+.level-badge {
+    background: linear-gradient(45deg, #ff0080, #ff8c00);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    margin-left: 10px;
+    animation: pulse 2s infinite;
+}
+
+/* ===== УЛУЧШЕНИЯ С ЭФФЕКТАМИ ===== */
+.upgrade-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.glow {
+    animation: glow 2s infinite;
+}
+
+.glowing {
+    animation: glow 1.5s infinite;
+}
+
+.upgrade-progress {
+    height: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.upgrade-progress::after {
+    content: '';
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #00ff80, #00ccff);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* ===== СТАТИСТИКА С ЭФФЕКТАМИ ===== */
+.glowing-stat {
+    animation: pulse 3s infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.glowing-stat::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+    );
+    animation: spin 4s linear infinite;
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #667eea;
+}
+
+/* ===== КНОПКИ С ЭФФЕКТАМИ ===== */
+.effect-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.effect-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.effect-btn:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-effect {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 400px;
+    width: 90%;
+    animation: modalAppear 0.5s ease;
+    position: relative;
+}
+
+@keyframes modalAppear {
+    from {
+        transform: scale(0.5) translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #eee;
-}
-
-header h1 {
-    color: #333;
-    font-size: 1.8rem;
-}
-
-header h1 i {
-    color: #667eea;
-    margin-right: 10px;
-}
-
-.user-info {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 50px;
-    font-weight: bold;
-}
-
-/* Кликер */
-.clicker-area {
-    text-align: center;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    padding: 40px 20px;
-    border-radius: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.click-counter {
-    margin-bottom: 30px;
-}
-
-.click-counter .counter {
-    font-size: 4rem;
-    font-weight: bold;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    display: block;
-}
-
-.click-counter .label {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.9);
-}
-
-#click-btn {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    border: none;
-    border-radius: 50%;
-    width: 150px;
-    height: 150px;
-    font-size: 1.5rem;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-#click-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
-}
-
-#click-btn:active {
-    transform: scale(0.95);
-}
-
-#click-btn i {
-    font-size: 3rem;
-}
-
-.cps {
-    margin-top: 20px;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: bold;
-}
-
-/* Улучшения */
-.upgrades {
-    margin-bottom: 30px;
-}
-
-.upgrades h2 {
-    color: #333;
     margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
-.upgrade-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.upgrade {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    border: 2px solid #e0e0e0;
-    transition: all 0.3s;
-}
-
-.upgrade:hover {
-    border-color: #667eea;
-    transform: translateY(-5px);
-}
-
-.upgrade h3 {
-    color: #444;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.upgrade p {
-    color: #666;
-    margin: 5px 0;
-}
-
-.buy-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+.close-modal {
+    background: none;
     border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
+    font-size: 2rem;
     cursor: pointer;
-    font-weight: bold;
-    width: 100%;
-    margin-top: 10px;
-    transition: all 0.3s;
-}
-
-.buy-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-.buy-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Статистика */
-.stats {
-    margin-bottom: 30px;
-}
-
-.stats h2 {
-    color: #333;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-}
-
-.stat {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.stat-label {
     color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 5px;
 }
 
-.stat-value {
-    color: #333;
-    font-size: 1.5rem;
-    font-weight: bold;
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 768px) {
+    .combo-counter {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin: 10px auto;
+        width: fit-content;
+    }
+    
+    .pulse-ring {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .sparkles {
+        width: 130px;
+        height: 130px;
+    }
 }
 
-/* Футер */
-footer {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    padding-top: 20px;
-    border-top: 2px solid #eee;
+/* ===== ЭФФЕКТ ПРИ КЛИКЕ НА КНОПКУ ===== */
+.clicking {
+    animation: clickAnimation 0.3s ease;
 }
 
-.tg-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
-}
-
-.tg-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-/* Адаптивность */
-@media (max-width: 600px) {
-    .container {
-        padding: 15px;
-    }
-    
-    header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .upgrade-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    #click-btn {
-        width: 120px;
-        height: 120px;
-        font-size: 1.2rem;
-    }
-    
-    .click-counter .counter {
-        font-size: 3rem;
-    }
-    
-    footer {
-        flex-direction: column;
-    }
-    
-    .tg-btn {
-        width: 100%;
-        justify-content: center;
-    }
+@keyframes clickAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
 }
