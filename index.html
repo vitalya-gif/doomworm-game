@@ -59,7 +59,7 @@
       pointer-events: none;
     }
 
-    /* Персонаж */
+    /* Герой */
     #hero-container {
       position: absolute;
       top: 50%;
@@ -67,24 +67,19 @@
       transform: translate(-50%, -50%);
       z-index: 8;
       cursor: pointer;
-      filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
     }
 
-    /* Эффекты */
-    .effect {
+    /* Сюжет */
+    #story {
       position: absolute;
-      opacity: 0;
-      z-index: 9;
-    }
-
-    /* Анимация тряски */
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-    .shake {
-      animation: shake 0.5s;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 1.1em;
+      color: #ffeb3b;
+      text-shadow: 0 0 5px black;
+      z-index: 6;
     }
   </style>
 </head>
@@ -97,35 +92,21 @@
   <div id="buckets" class="ui-panel">🪣 <span id="water">20</span></div>
   <div id="title">vitaly molodec</div>
 
-  <!-- Персонаж -->
+  <!-- Герой -->
   <div id="hero-container" onclick="pourWater()">
-    <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" width="180" height="270">
-      <!-- Тело (стиль Халка) -->
-      <path d="M100,50 Q130,80 120,120 Q100,140 80,120 Q70,80 100,50" fill="#f4c2a1" stroke="black" stroke-width="3"/>
-      <!-- Руки -->
-      <path d="M60,100 Q40,120 50,150" fill="none" stroke="black" stroke-width="3"/>
-      <path d="M140,100 Q160,120 150,150" fill="none" stroke="black" stroke-width="3"/>
-      <!-- Ноги -->
-      <path d="M90,160 L80,220" fill="none" stroke="black" stroke-width="3"/>
-      <path d="M110,160 L120,220" fill="none" stroke="black" stroke-width="3"/>
-      <!-- Штаны (чёрные) -->
-      <path d="M70,160 Q100,180 130,160 L120,220 L80,220 Z" fill="black" stroke="black" stroke-width="3"/>
-      <!-- Nike логотип -->
-      <path d="M95,190 Q100,185 105,190" stroke="white" stroke-width="3" fill="none"/>
-      <!-- Лицо -->
-      <circle cx="100" cy="40" r="20" fill="#f4c2a1" stroke="black" stroke-width="3"/>
-      <!-- Глаза -->
-      <circle cx="90" cy="35" r="5" fill="black"/>
-      <circle cx="110" cy="35" r="5" fill="black"/>
-      <!-- Рот (крик) -->
-      <path d="M90,50 Q100,65 110,50" stroke="black" stroke-width="3" fill="none"/>
-    </svg>
+    <img id="hero" src="hero-animation.gif" style="width:180px; height:auto; display:none;">
+    <div id="static-hero" style="width:180px; height:300px; background:#f0f0f0; border:2px solid black; border-radius:10px; display:flex;align-items:center;justify-content:center;font-size:2em;">?</div>
   </div>
 
   <!-- Сюжет -->
-  <div id="story" style="position:absolute;bottom:20px;left:0;width:100%;text-align:center;font-size:1.1em;color:#ffeb3b;text-shadow:0 0 5px black;z-index:6;">
+  <div id="story">
     OmniCore следит... Каждое ведро — капля свободы.
   </div>
+
+  <!-- Звук -->
+  <audio id="scream-sound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA" type="audio/wav">
+  </audio>
 
   <script>
     let health = 100;
@@ -139,62 +120,47 @@
     function pourWater() {
       if (water <= 0) return;
 
-      const container = document.body;
-      const hero = document.getElementById('hero-container');
-      const rect = hero.getBoundingClientRect();
+      const heroImg = document.getElementById('hero');
+      const staticHero = document.getElementById('static-hero');
 
-      // Тряска персонажа
-      hero.classList.add('shake');
-      setTimeout(() => hero.classList.remove('shake'), 500);
+      // Показываем анимацию
+      staticHero.style.display = 'none';
+      heroImg.style.display = 'block';
 
-      // Ведро
-      const bucket = document.createElement('div');
-      bucket.innerHTML = `<svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg"><path d="M15,10 L45,10 L50,60 L10,60 Z" fill="#cccccc" stroke="black" stroke-width="3"/><path d="M20,5 L40,5 L45,10 L15,10 Z" fill="#bbbbbb" stroke="black" stroke-width="3"/><path d="M25,0 Q30,-10 35,0" stroke="black" stroke-width="3" fill="none"/></svg>`;
-      bucket.className = 'effect';
-      bucket.style.left = `${rect.left + rect.width / 2 - 30}px`;
-      bucket.style.top = `${rect.top - 100}px`;
-      container.appendChild(bucket);
+      // Проигрываем звук
+      const sound = document.getElementById('scream-sound');
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(() => {});
+      }
 
-      // Анимация ведра
+      // Через 1.5 сек — возвращаем статичную версию
       setTimeout(() => {
-        bucket.style.transition = 'top 0.6s, opacity 0.6s';
-        bucket.style.opacity = '1';
-        bucket.style.top = `${rect.top - 30}px`;
-      }, 100);
+        heroImg.style.display = 'none';
+        staticHero.style.display = 'flex';
+      }, 1500);
 
-      // Брызги и крик
-      setTimeout(() => {
-        // Брызги
-        const splash = document.createElement('div');
-        splash.innerHTML = `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60,20 Q80,10 90,30 Q100,50 90,70 Q80,90 60,80 Q40,90 30,70 Q20,50 30,30 Q40,10 60,20" fill="#add8e6" stroke="black" stroke-width="2"/><circle cx="50,30" r="5" fill="white"/><circle cx="70,40" r="4" fill="white"/></svg>`;
-        splash.className = 'effect';
-        splash.style.left = `${rect.left + rect.width / 2 - 60}px`;
-        splash.style.top = `${rect.top + 30}px`;
-        container.appendChild(splash);
+      // Обновляем данные
+      water--;
+      health = Math.min(100, health + 5);
+      updateUI();
 
-        // Речевой пузырь
-        const bubble = document.createElement('div');
-        bubble.innerHTML = `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><path d="M30,90 Q10,70 30,50 Q50,30 70,50 Q90,70 70,90 L50,90 L40,100 L30,90" fill="white" stroke="black" stroke-width="4"/><text x="50" y="75" font-family="Bangers, cursive" font-size="40" fill="black" text-anchor="middle">АААА!</text></svg>`;
-        bubble.className = 'effect';
-        bubble.style.left = `${rect.left + rect.width / 2 - 110}px`;
-        bubble.style.top = `${rect.top - 140}px`;
-        container.appendChild(bubble);
-
-        // Обновление данных
-        water--;
-        health = Math.min(100, health + 5);
-        updateUI();
-
-        // Удаление через 1.2 сек
-        setTimeout(() => {
-          bucket.remove();
-          splash.remove();
-          bubble.remove();
-        }, 1200);
-      }, 700);
+      // Сохраняем в localStorage
+      localStorage.setItem('doomworm-game', JSON.stringify({ health, water }));
     }
 
-    updateUI();
+    // Загрузка сохранения
+    function loadGame() {
+      const saved = localStorage.getItem('doomworm-game');
+      if (saved) {
+        const data = JSON.parse(saved);
+        health = data.health || 100;
+        water = data.water || 20;
+        updateUI();
+      }
+    }
+
+    loadGame();
   </script>
 </body>
-</html> Финальная версия: арт в стиле Marvel, сюжет OmniCore
+</html>
