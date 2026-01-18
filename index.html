@@ -2,15 +2,17 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>DOOMWORM CLICKER 2.0</title>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
       padding: 0;
-      /* Фон города + резервный градиент */
-      background: linear-gradient(to bottom, #0b1a3a, #1a3a5f) url('omnicore-city.jpg') center/cover no-repeat fixed;
+      background: linear-gradient(to bottom, #0b1a3a, #1a3a5f),
+                  url('omnicore-city.jpg') center/cover no-repeat fixed;
       font-family: 'Bangers', cursive;
       color: white;
       min-height: 100vh;
@@ -18,7 +20,6 @@
       position: relative;
     }
 
-    /* UI панель */
     .ui-panel {
       position: absolute;
       top: 20px;
@@ -29,7 +30,6 @@
     #score { left: 20px; color: gold; }
     #upgrades { right: 20px; color: #4fc3f7; }
 
-    /* Надпись заголовка */
     #title {
       position: absolute;
       top: 30px;
@@ -43,7 +43,6 @@
       pointer-events: none;
     }
 
-    /* Герой (DoomBot) */
     #hero-container {
       position: absolute;
       bottom: 100px;
@@ -51,7 +50,6 @@
       z-index: 7;
     }
 
-    /* Дрон (враг) */
     #drone-container {
       position: absolute;
       top: 50%;
@@ -61,7 +59,16 @@
       cursor: pointer;
     }
 
-    /* Взрыв */
+    #drone {
+      width: 200px;
+      height: auto;
+      transition: transform 0.1s ease, opacity 0.2s ease;
+    }
+
+    #drone.clicked {
+      transform: scale(0.9);
+    }
+
     #explosion {
       position: absolute;
       top: 50%;
@@ -69,9 +76,9 @@
       transform: translate(-50%, -50%);
       opacity: 0;
       z-index: 9;
+      transition: opacity 0.3s ease;
     }
 
-    /* Сюжетная подпись */
     #story {
       position: absolute;
       bottom: 20px;
@@ -83,103 +90,137 @@
       text-shadow: 0 0 5px black;
       z-index: 6;
     }
+
+    #reset-btn {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font-family: 'Bangers', cursive;
+      font-size: 1em;
+      padding: 5px 15px;
+      border: none;
+      border-radius: 6px;
+      background: #ff5252;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    }
   </style>
 </head>
 <body>
-  <!-- Заголовок -->
   <div id="title">DOOMWORM CLICKER 2.0</div>
 
-  <!-- Счётчики -->
   <div id="score" class="ui-panel">Очки: <span id="points">0</span></div>
   <div id="upgrades" class="ui-panel">Улучшения: <span id="upg-count">0</span></div>
+  <button id="reset-btn">Сброс</button>
 
-  <!-- Герой: DoomBot -->
   <div id="hero-container">
     <img src="doombot.png" style="width:150px; height:auto;">
   </div>
 
-  <!-- Дрон: кликабельный объект -->
-  <div id="drone-container" onclick="clickDrone()">
-    <img id="drone" src="drone.png" style="width:200px; height:auto;">
+  <div id="drone-container">
+    <img id="drone" src="drone.png">
   </div>
 
-  <!-- Взрыв (изначально скрыт) -->
   <div id="explosion">
-    <img src="explosion.png" style="width:250px; height:auto; display:none;">
+    <img src="explosion.png" style="width:250px; height:auto; display:block;">
   </div>
 
-  <!-- Сюжет -->
   <div id="story">
     DoomBot с тобой. Уничтожай дронов OmniCore!
   </div>
 
-  <!-- Звук взрыва -->
   <audio id="explosion-sound" preload="auto">
-    <source src="audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiIHxQwhc3y0oskGi17yfDXkB0aL3fJ8NuXIhYtdMfu5KAdGC5yx+7mnR0YLW7G7eOWGxcsbcbt4pEbFiprxuzhkBoVK2jG7OGPGhUpZsbs4I0ZFChlxuvfjBgUJ2TF696KGhQmY8Tq3okYFCVhw+nchxgUI1/A6dyEGhQiXr/p24UYEyFcvenahBgTH1m86NiDGhMdV7no1oIaExxUuOfVgRoTG1K25tN/GhMZULXl0n4aExdOs+PRfRoTFUyw4s98GhMSUK/gznkaEhBNrd7Neg==" type="audio/wav">
+    <source src="explosion.wav" type="audio/wav">
   </audio>
 
   <script>
     let points = 0;
     let upgrades = 0;
+    let multiplier = 1;
 
     function updateUI() {
       document.getElementById('points').textContent = points;
       document.getElementById('upg-count').textContent = upgrades;
+      updateStory();
     }
 
-    function clickDrone() {
-      const drone = document.getElementById('drone');
-      const explosion = document.getElementById('explosion').firstElementChild;
-      
-      // Скрываем дрона
-      drone.style.opacity = '0';
-      
-      // Показываем взрыв
-      explosion.style.display = 'block';
-      explosion.style.opacity = '1';
+    function updateStory() {
+      const story = document.getElementById('story');
 
-      // Звук
-      const sound = document.getElementById('explosion-sound');
-      if (sound) {
-        sound.currentTime = 0;
-        sound.play().catch(() => {});
+      if (points < 50) {
+        story.textContent = 'DoomBot с тобой. Уничтожай дронов OmniCore!';
+      } else if (points < 200) {
+        story.textContent = 'OmniCore в панике! Продолжай давить их дронов!';
+      } else {
+        story.textContent = 'Ты — кошмар OmniCore. Doomworm уже чувствует твой гнев...';
       }
-
-      // Начисляем очки
-      points += 10;
-      updateUI();
-
-      // Разблокируем улучшение каждые 50 очков
-      if (points % 50 === 0 && points > 0) {
-        upgrades++;
-        updateUI();
-      }
-
-      // Через 1 сек — возвращаем дрона
-      setTimeout(() => {
-        explosion.style.opacity = '0';
-        setTimeout(() => {
-          explosion.style.display = 'none';
-          drone.style.opacity = '1';
-        }, 500);
-      }, 1000);
-
-      // Сохраняем прогресс
-      localStorage.setItem('doomworm-clicker', JSON.stringify({ points, upgrades }));
     }
 
-    // Загрузка сохранённого прогресса
+    function saveGame() {
+      localStorage.setItem('doomworm-clicker',
+        JSON.stringify({ points, upgrades, multiplier })
+      );
+    }
+
     function loadGame() {
       const saved = localStorage.getItem('doomworm-clicker');
       if (saved) {
         const data = JSON.parse(saved);
         points = data.points || 0;
         upgrades = data.upgrades || 0;
+        multiplier = data.multiplier || 1;
         updateUI();
       }
     }
 
+    function clickDrone() {
+      const drone = document.getElementById('drone');
+      const explosion = document.getElementById('explosion');
+      const sound = document.getElementById('explosion-sound');
+
+      drone.classList.add('clicked');
+      setTimeout(() => drone.classList.remove('clicked'), 100);
+
+      drone.style.opacity = '0';
+      explosion.style.opacity = '1';
+
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(() => {});
+      }
+
+      points += 10 * multiplier;
+
+      if (points % 50 === 0 && points > 0) {
+        upgrades++;
+        multiplier++;
+      }
+
+      updateUI();
+      saveGame();
+
+      setTimeout(() => {
+        explosion.style.opacity = '0';
+        setTimeout(() => {
+          drone.style.opacity = '1';
+        }, 300);
+      }, 700);
+    }
+
+    document.getElementById('drone-container').onclick = clickDrone;
+
+    document.getElementById('reset-btn').onclick = () => {
+      points = 0;
+      upgrades = 0;
+      multiplier = 1;
+      updateUI();
+      localStorage.removeItem('doomworm-clicker');
+    };
+
     loadGame();
   </script>
 </body>
-</html> DOOMWORM CLICKER 2.0: полная версия с DoomBot
+</html>
