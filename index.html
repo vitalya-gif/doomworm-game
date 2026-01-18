@@ -9,7 +9,8 @@
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #0b1a3a, #1a3a5f);
+      /* Фон: либо изображение, либо градиент */
+      background: url('background.jpg') center/cover no-repeat fixed;
       font-family: 'Bangers', cursive;
       color: white;
       min-height: 100vh;
@@ -17,7 +18,7 @@
       position: relative;
     }
 
-    /* Звёзды */
+    /* Звёзды поверх фона */
     .stars {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -84,7 +85,7 @@
   </style>
 </head>
 <body>
-  <!-- Фон -->
+  <!-- Фон уже задан через CSS -->
   <div class="stars"></div>
 
   <!-- UI -->
@@ -105,7 +106,7 @@
 
   <!-- Звук -->
   <audio id="scream-sound" preload="auto">
-    <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA" type="audio/wav">
+    <source src="audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAA" type="audio/wav">
   </audio>
 
   <script>
@@ -123,33 +124,26 @@
       const heroImg = document.getElementById('hero');
       const staticHero = document.getElementById('static-hero');
 
-      // Показываем анимацию
       staticHero.style.display = 'none';
       heroImg.style.display = 'block';
 
-      // Проигрываем звук
       const sound = document.getElementById('scream-sound');
       if (sound) {
         sound.currentTime = 0;
         sound.play().catch(() => {});
       }
 
-      // Через 1.5 сек — возвращаем статичную версию
       setTimeout(() => {
         heroImg.style.display = 'none';
         staticHero.style.display = 'flex';
       }, 1500);
 
-      // Обновляем данные
       water--;
       health = Math.min(100, health + 5);
       updateUI();
-
-      // Сохраняем в localStorage
       localStorage.setItem('doomworm-game', JSON.stringify({ health, water }));
     }
 
-    // Загрузка сохранения
     function loadGame() {
       const saved = localStorage.getItem('doomworm-game');
       if (saved) {
@@ -163,4 +157,4 @@
     loadGame();
   </script>
 </body>
-</html>
+</html> Добавлен фон background.jpg + улучшена компоновка
