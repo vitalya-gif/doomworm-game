@@ -1,178 +1,121 @@
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(to right, #0b1a3a, #5ca9dd);
-  font-family: 'Bangers', cursive;
-  color: white;
+  background:
+    linear-gradient(to bottom, #0b1a3a, #1a3a5f),
+    url("omnicore-city.jpg") center/cover no-repeat fixed;
+  font-family: "Bangers", cursive;
+  color: #fff;
   min-height: 100vh;
   overflow: hidden;
   position: relative;
 }
 
-#stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-#stars::before {
-  content: "";
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  box-shadow:
-    10% 20% 0 0 white,
-    25% 10% 0 0 white,
-    40% 30% 0 0 white,
-    60% 25% 0 0 white,
-    75% 15% 0 0 white,
-    90% 35% 0 0 white,
-    15% 50% 0 0 white,
-    35% 60% 0 0 white,
-    55% 55% 0 0 white,
-    70% 70% 0 0 white,
-    85% 80% 0 0 white;
-  opacity: 0.8;
-}
-
-#health-bar {
+.ui-panel {
   position: absolute;
   top: 20px;
+  font-size: 1.4em;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+  z-index: 10;
+}
+
+#score {
   left: 20px;
-  font-size: 1.4em;
   color: gold;
-  text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
-  z-index: 10;
 }
 
-#buckets {
-  position: absolute;
-  top: 20px;
+#upgrades {
   right: 20px;
-  font-size: 1.4em;
-  color: #fff;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-  z-index: 10;
+  color: #4fc3f7;
 }
 
 #title {
   position: absolute;
-  top: 50%;
+  top: 30px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2.8em;
-  color: white;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
-  letter-spacing: 3px;
+  transform: translateX(-50%);
+  font-size: 2.2em;
+  color: #fff;
+  text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+  letter-spacing: 2px;
   z-index: 5;
   pointer-events: none;
 }
 
-#character {
+#hero-container {
+  position: absolute;
+  bottom: 90px;
+  left: 25px;
+  z-index: 7;
+}
+
+.hero {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+
+#drone-container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 120px;
-  height: 200px;
-  cursor: pointer;
   z-index: 8;
+  cursor: pointer;
 }
 
-#body {
-  width: 60px;
-  height: 160px;
-  background: #f0f0f0;
-  margin: 0 auto;
-  border-radius: 40px 40px 0 0;
-  position: relative;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+#drone {
+  width: 200px;
+  height: auto;
+  display: block;
+  transition: transform 0.1s ease, opacity 0.2s ease;
 }
 
-#body::after {
-  content: "";
+#drone.clicked {
+  transform: scale(0.9);
+}
+
+#explosion {
   position: absolute;
-  bottom: -40px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  width: 70px;
-  height: 80px;
-  background: black;
-  border-radius: 10px;
-}
-
-#nike-logo {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 30px;
-  height: 15px;
-}
-
-#nike-logo::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: white;
-  clip-path: polygon(0 100%, 30% 0, 100% 100%);
-}
-
-#water-effect {
-  position: absolute;
-  top: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 80px;
-  background: radial-gradient(circle, rgba(173, 216, 230, 0.8), transparent 70%);
-  border-radius: 50%;
+  transform: translate(-50%, -50%);
   opacity: 0;
   z-index: 9;
+  transition: opacity 0.3s ease;
 }
 
-#water-effect.visible {
-  animation: pourWater 1s forwards;
+.explosion-img {
+  width: 250px;
+  height: auto;
+  display: block;
 }
 
-@keyframes pourWater {
-  0% { opacity: 0; transform: translateX(-50%) scale(0.5); }
-  50% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(-50%) translateY(50px) scale(1.5); }
-}
-
-.hidden { display: none; }
-
-/* Снег */
-.snow {
+#story {
   position: absolute;
-  bottom: 0;
+  bottom: 20px;
   left: 0;
   width: 100%;
-  height: 80px;
-  background: white;
-  z-index: 2;
+  text-align: center;
+  font-size: 1.1em;
+  color: #ffeb3b;
+  text-shadow: 0 0 5px #000;
+  z-index: 6;
 }
 
-/* Ёлки */
-.tree {
+#reset-btn {
   position: absolute;
-  bottom: 80px;
-  width: 40px;
-  height: 100px;
-  background: conic-gradient(from 180deg, transparent 0deg, #0a5f20 120deg, transparent 240deg);
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  z-index: 3;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-family: "Bangers", cursive;
+  font-size: 1em;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 6px;
+  background: #ff5252;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
 }
-
-#tree1 { left: 10%; }
-#tree2 { right: 15%; transform: scaleX(-1); }
